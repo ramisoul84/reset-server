@@ -6,7 +6,7 @@ import (
 
 type ClientRepository interface {
 	GetByEmail(clientEmail string) (*client.Client, error)
-	Add(client client.Client) (*client.Client, error)
+	Add(client client.Client) error
 	List() ([]*client.Client, error)
 }
 

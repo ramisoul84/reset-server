@@ -6,7 +6,7 @@ import (
 
 type ClientService interface {
 	GetClientByEmail(clientEmail string) (*client.Client, error)
-	CreateClient(client client.Client) (*client.Client, error)
+	CreateClient(client client.Client) error
 	ListClients() ([]*client.Client, error)
 }
 

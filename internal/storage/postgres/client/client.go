@@ -1,9 +1,6 @@
 package client
 
 import (
-	"errors"
-	"fmt"
-
 	"github.com/jmoiron/sqlx"
 	"github.com/ramisoul84/reset-server/internal/entity/client"
 )
@@ -19,27 +16,30 @@ func NewClientRepository(db *sqlx.DB) *ClientRepository {
 }
 
 func (r *ClientRepository) GetByEmail(clientEmail string) (*client.Client, error) {
-	client := &client.Client{}
-	err := r.db.QueryRow("SELECT * FROM clients WHERE email = $1", clientEmail).Scan(&client.ID, &client.Name, &client.Email)
-	fmt.Println("repo ", client)
+	var client client.Client
+	query := `SELECT id, name, email, created_at FROM clients WHERE email = $1`
+	err := r.db.Get(&client, query, clientEmail)
 	if err != nil {
 		return nil, err
-	}
-	return client, nil
-}
-
-func (r *ClientRepository) Add(client client.Client) (*client.Client, error) {
-	query := "INSERT INTO clients (name,email) VALUES ($1,$2) RETURNING *"
-	err := r.db.QueryRow(query, client.Name, client.Email).Scan(&client.ID, &client.Name, &client.Email)
-	if err != nil {
-		return nil, errors.New("Error creating user: " + err.Error())
 	}
 	return &client, nil
 }
 
+func (r *ClientRepository) Add(client client.Client) error {
+	query := `
+        INSERT INTO clients (name, email,created_at)
+        VALUES (:name, :email, :created_at)`
+	_, err := r.db.NamedExec(query, client)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (r *ClientRepository) List() ([]*client.Client, error) {
-	clients := []*client.Client{}
-	err := r.db.Select(&clients, "SELECT * FROM clients ORDER BY id ASC")
+	var clients []*client.Client
+	query := `SELECT * FROM clients`
+	err := r.db.Select(&clients, query)
 	if err != nil {
 		return nil, err
 	}

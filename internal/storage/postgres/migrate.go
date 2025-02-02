@@ -11,7 +11,8 @@ func CreateTables(db *sqlx.DB) error {
 	CREATE TABLE IF NOT EXISTS clients (
     	id SERIAL PRIMARY KEY,
 		name VARCHAR(255),
-		email VARCHAR(255) NOT NULL UNIQUE
+		email VARCHAR(255) NOT NULL UNIQUE,
+		created_at TIMESTAMP
 		);
 	`
 	_, err := db.Exec(createClientsQuery)

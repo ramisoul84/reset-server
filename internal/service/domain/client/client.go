@@ -2,7 +2,7 @@ package client
 
 import (
 	"errors"
-	"fmt"
+	"time"
 
 	"github.com/ramisoul84/reset-server/internal/entity/client"
 	"github.com/ramisoul84/reset-server/internal/storage"
@@ -22,12 +22,12 @@ func (s *ClientService) GetClientByEmail(clientEmail string) (*client.Client, er
 	return s.clientRepository.GetByEmail(clientEmail)
 }
 
-func (s *ClientService) CreateClient(client client.Client) (*client.Client, error) {
+func (s *ClientService) CreateClient(client client.Client) error {
 	foundClient, _ := s.clientRepository.GetByEmail(client.Email)
-	fmt.Println("service", foundClient)
 	if foundClient != nil {
-		return nil, errors.New("email already registered")
+		return errors.New("email already registered")
 	}
+	client.CreatedAt = time.Now()
 	return s.clientRepository.Add(client)
 }
 

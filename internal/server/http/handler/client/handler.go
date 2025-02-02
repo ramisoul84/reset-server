@@ -25,13 +25,13 @@ func (h *httpHandler) addClient(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "wrong email", http.StatusBadRequest)
 		return
 	}
-	addedClient, err := h.service.ClientService.CreateClient(client)
+	err := h.service.ClientService.CreateClient(client)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	w.Header().Set("Content-Type", "application/json;charset=utf-8")
-	if err = json.NewEncoder(w).Encode(addedClient); err != nil {
+	if err = json.NewEncoder(w).Encode("a new client has been added"); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
